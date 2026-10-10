@@ -1,7 +1,7 @@
 import math
 import sys
 
-# mathjs config.epsilon: the relative tolerance of its smallerEq
+# mathjs smallerEq counts values within config.epsilon (relative) or DBL_EPSILON (absolute) as equal
 MATHJS_EPSILON = 1e-12
 
 

@@ -4,6 +4,10 @@ coefficients:
   BOHR_TO_ANGSTROM: 0.529177210544
   ANGSTROM_TO_BOHR: 1.8897261259077822 # 1 / 0.529177210544
   EV_A_TO_RY_BOHR: 0.0388938075966032  # 0.529177210544 / 13.605693122990
+  # mat3ra/code's EV_PER_ANGSTROM3_TO_GPA formula, multiplied by 10 kbar/GPa:
+  # e / (1e-10)**3 / 1e9 * 10, with the exact SI charge e = 1.602176634e-19 C.
+  # https://github.com/mat3ra/code/blob/main/src/py/mat3ra/code/constants.py
+  ELECTRONVOLT_PER_ANGSTROM_CUBED_TO_KILOBAR: 1602.176634
 
 tolerance:
   # in crystal coordinates

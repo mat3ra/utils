@@ -4,6 +4,8 @@ coefficients:
   BOHR_TO_ANGSTROM: 0.529177210544
   ANGSTROM_TO_BOHR: 1.8897261259077822 # 1 / 0.529177210544
   EV_A_TO_RY_BOHR: 0.0388938075966032  # 0.529177210544 / 13.605693122990
+  # e / (1e-10)**3 / 1e9, with the exact SI charge e = 1.602176634e-19 C.
+  EV_A3_TO_GPA: 160.2176634
 
 tolerance:
   # in crystal coordinates

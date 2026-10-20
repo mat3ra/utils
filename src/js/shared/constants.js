@@ -5,7 +5,8 @@ export const coefficients = {
     "EV_TO_RY": 0.0734986444,
     "BOHR_TO_ANGSTROM": 0.529177210544,
     "ANGSTROM_TO_BOHR": 1.8897261259077822,
-    "EV_A_TO_RY_BOHR": 0.0388938075966032
+    "EV_A_TO_RY_BOHR": 0.0388938075966032,
+    "EV_A3_TO_GPA": 160.2176634
 };
 
 export const tolerance = {

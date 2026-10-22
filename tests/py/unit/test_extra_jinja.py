@@ -1,6 +1,7 @@
 import pytest
 from pathlib import Path
 
+from jinja2 import TemplateError
 from mat3ra.utils.extra import jinja as utils
 
 FILE_JINJA_TEMPLATE_PATH = Path(__file__).parent / "./fixtures/file_jinja_template.jinja"
@@ -35,6 +36,33 @@ def test_render_template_string():
     context = {"name": "World"}
     rendered = utils.render_template_string("Hello, {{ name }}!", **context)
     assert rendered == "Hello, World!"
+
+
+@pytest.mark.parametrize("render", [utils.render_template_string, utils.render_jinja_with_error_handling])
+def test_custom_filters_are_local_and_keep_builtins(render):
+    filters = {"sprintf": lambda value, pattern: pattern % value}
+    rendered = render('{{ value | sprintf("%.2f") }} {{ name | upper }}', filters=filters, value=1.25, name="silicon")
+    assert rendered == "1.25 SILICON"
+    with pytest.raises(TemplateError):
+        utils.render_template_string('{{ value | sprintf("%.2f") }}', value=1.25)
+    assert list(filters) == ["sprintf"]
+
+
+def test_output_formatter_and_raw_runtime_placeholder():
+    rendered = utils.render_jinja_with_error_handling(
+        "{{ value }} {% raw %}{{ JOB_WORK_DIR }}{% endraw %}",
+        finalize=lambda value: int(value) if isinstance(value, float) and value.is_integer() else value,
+        value=4.0,
+    )
+    assert rendered == "4 {{ JOB_WORK_DIR }}"
+    assert utils.render_jinja_with_error_handling("{{ value }}", value=4.0) == "4.0"
+
+
+def test_default_error_text_and_opt_in_exception():
+    template = "{{ value | missing_filter }}"
+    assert utils.render_jinja_with_error_handling(template, value=1).startswith("Error rendering template:")
+    with pytest.raises(TemplateError):
+        utils.render_jinja_with_error_handling(template, raise_errors=True, value=1)
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,34 @@
 import fcntl
+import hashlib
+import json
 import os
 import time
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+
+
+def file_sha256(path) -> str:
+    """Hash file bytes without loading large artifacts into memory."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def write_json_atomic(path, value) -> None:
+    """Replace JSON only after finite data has been fully written on the same filesystem."""
+    path = Path(path)
+    content = json.dumps(value, indent=4, allow_nan=False) + "\n"
+    with NamedTemporaryFile(mode="w", dir=path.parent, delete=False) as stream:
+        temporary = Path(stream.name)
+        try:
+            stream.write(content)
+            stream.close()
+            temporary.replace(path)
+        finally:
+            if temporary.exists():
+                temporary.unlink()
 
 
 def get_file_content(file_path: str) -> str:

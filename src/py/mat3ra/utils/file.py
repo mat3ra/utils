@@ -16,8 +16,8 @@ def file_sha256(path) -> str:
     return digest.hexdigest()
 
 
-def write_json_atomic(path, value) -> None:
-    """Replace JSON only after finite data has been fully written on the same filesystem."""
+def write_json_file(path, value) -> None:
+    """Write finite JSON to a temporary file, then replace the destination after the write succeeds."""
     path = Path(path)
     content = json.dumps(value, indent=4, allow_nan=False) + "\n"
     with NamedTemporaryFile(mode="w", dir=path.parent, delete=False) as stream:

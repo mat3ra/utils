@@ -15,7 +15,7 @@ def file_sha256(path) -> str:
     return digest.hexdigest()
 
 
-def write_file(path, content: str) -> None:
+def write_file_content(path, content: str) -> None:
     """Write UTF-8 text to a temporary file, then replace the destination after the write succeeds."""
     path = Path(path)
     with NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False) as stream:

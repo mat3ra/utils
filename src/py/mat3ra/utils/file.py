@@ -1,6 +1,5 @@
 import fcntl
 import hashlib
-import json
 import os
 import time
 from pathlib import Path
@@ -16,11 +15,10 @@ def file_sha256(path) -> str:
     return digest.hexdigest()
 
 
-def write_json_file(path, value) -> None:
-    """Write finite JSON to a temporary file, then replace the destination after the write succeeds."""
+def write_file(path, content: str) -> None:
+    """Write UTF-8 text to a temporary file, then replace the destination after the write succeeds."""
     path = Path(path)
-    content = json.dumps(value, indent=4, allow_nan=False) + "\n"
-    with NamedTemporaryFile(mode="w", dir=path.parent, delete=False) as stream:
+    with NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)
         try:
             stream.write(content)

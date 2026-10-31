@@ -1,8 +1,35 @@
+import os
 import shlex
+import signal
 import subprocess
 from threading import Timer
 
 TIMEOUT_RETURNCODE = -1000
+
+
+def run_command_with_log(arguments: list, log_path, timeout: float, **options) -> None:
+    """
+    Run a POSIX process group with a live log; kill all children on timeout or interruption.
+
+    Unlike the captured-output helpers, output is streamed to disk. Popen's cwd
+    and env can be supplied through options. Failures raise CalledProcessError;
+    timeouts retain partial output and raise TimeoutExpired after cleanup.
+    """
+    with open(log_path, "w") as output:
+        process = subprocess.Popen(
+            arguments, stdout=output, stderr=subprocess.STDOUT, start_new_session=True, **options
+        )
+        try:
+            returncode = process.wait(timeout=timeout)
+        except BaseException:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            process.wait()
+            raise
+    if returncode:
+        raise subprocess.CalledProcessError(returncode, arguments)
 
 
 def run_command_with_timeout(args: list, timeout: int = 30, **kwargs):

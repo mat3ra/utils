@@ -84,6 +84,7 @@ extend-exclude = '''
 '''
 
 [tool.ruff]
+extend-select = ["D213"]
 # Exclude a variety of commonly ignored directories.
 extend-exclude = [
     "src/js",

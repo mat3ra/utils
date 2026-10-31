@@ -6,8 +6,10 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 
-def file_sha256(path) -> str:
-    """Hash file bytes without loading large artifacts into memory."""
+def get_file_hash_sha256(path) -> str:
+    """
+    Hash file bytes without loading large artifacts into memory.
+    """
     digest = hashlib.sha256()
     with Path(path).open("rb") as source:
         for chunk in iter(lambda: source.read(1024 * 1024), b""):
@@ -16,7 +18,9 @@ def file_sha256(path) -> str:
 
 
 def write_file_content(path, content: str) -> None:
-    """Write UTF-8 text to a temporary file, then replace the destination after the write succeeds."""
+    """
+    Write UTF-8 text to a temporary file, then replace the destination after the write succeeds.
+    """
     path = Path(path)
     with NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)

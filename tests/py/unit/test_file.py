@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 from mat3ra.utils import file as utils
-from mat3ra.utils.file import file_sha256, write_file_content
+from mat3ra.utils.file import get_file_hash_sha256, write_file_content
 
 REFERENCE_FILE_PATH = Path(__file__).parent / "./fixtures/file_with_content.txt"
 REFERENCE_FILE_CONTENT = """Content Line 1\nContent Line 2\nContent Line 3\n"""
@@ -48,7 +48,7 @@ def test_file_replacement_preservation_and_byte_hash(tmp_path, monkeypatch):
     write_file_content(path, "Plain text: \u03b1\n")
     original = path.read_bytes()
     assert original == "Plain text: \u03b1\n".encode("utf-8")
-    assert file_sha256(path) == hashlib.sha256(original).hexdigest()
+    assert get_file_hash_sha256(path) == hashlib.sha256(original).hexdigest()
     monkeypatch.setattr(Path, "replace", Mock(side_effect=OSError("replacement failed")))
     with pytest.raises(OSError, match="replacement failed"):
         write_file_content(path, "replacement")

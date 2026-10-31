@@ -8,7 +8,8 @@ TIMEOUT_RETURNCODE = -1000
 
 
 def run_command_with_log(arguments: list, log_path, timeout: float, **options) -> None:
-    """Run a POSIX process group with a live log; kill all children on timeout or interruption.
+    """
+    Run a POSIX process group with a live log; kill all children on timeout or interruption.
 
     Unlike the captured-output helpers, output is streamed to disk. Popen's cwd
     and env can be supplied through options. Failures raise CalledProcessError;

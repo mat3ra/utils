@@ -60,7 +60,8 @@ def snake_to_camel(snake_case_str: str) -> str:
 
 
 def remove_comments_from_source_code(text: str, language: str = "shell") -> str:
-    """Removes comments from source code based on the language.
+    """
+    Removes comments from source code based on the language.
     TODO: consider preserving values enclosed in quotes. support for following cases:
         url="https://www.example.com/about#company"
         message = "Hello, world!"

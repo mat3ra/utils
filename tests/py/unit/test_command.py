@@ -8,8 +8,8 @@ import pytest
 from mat3ra.utils import command as utils
 from mat3ra.utils.command import (
     TIMEOUT_RETURNCODE,
-    descendant_process_identifiers,
     execution_deadline,
+    get_descendant_process_identifiers,
     run_command_with_log,
 )
 
@@ -152,10 +152,10 @@ def test_execution_deadline_stops_the_processes_an_interrupted_call_left_behind(
 
 
 @POSIX_ONLY
-def test_descendant_process_identifiers_lists_the_deepest_first():
+def test_get_descendant_process_identifiers_lists_the_deepest_first():
     child, grandchild_identifier = start_child_with_its_own_child()
     try:
-        descendants = descendant_process_identifiers()
+        descendants = get_descendant_process_identifiers()
         assert {child.pid, grandchild_identifier} <= set(descendants)
         assert descendants.index(grandchild_identifier) < descendants.index(child.pid)
         assert os.getpid() not in descendants

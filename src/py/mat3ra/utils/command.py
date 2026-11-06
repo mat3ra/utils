@@ -129,7 +129,7 @@ def stop_descendant_processes(grace_seconds: float = 5.0) -> List[int]:
     started this process, so the group cannot be signalled as a whole; the tree is
     walked from this process instead and each process below it signalled on its own.
     """
-    descendants = descendant_process_identifiers()
+    descendants = get_descendant_process_identifiers()
     for signal_number in (signal.SIGTERM, signal.SIGKILL):
         remaining = []
         for process_identifier in descendants:
@@ -145,7 +145,7 @@ def stop_descendant_processes(grace_seconds: float = 5.0) -> List[int]:
     return descendants
 
 
-def descendant_process_identifiers() -> List[int]:
+def get_descendant_process_identifiers() -> List[int]:
     """
     Every process below this one, deepest first, as `ps` reports the parentage.
 

@@ -81,7 +81,7 @@ def run_command(command: str, timeout: int = 30, **kwargs):
 
 
 @contextmanager
-def execution_deadline(seconds: float, grace_seconds: float = 5.0) -> Iterator[None]:
+def execution_deadline_contextmanager(seconds: float, grace_seconds: float = 5.0) -> Iterator[None]:
     """
     Give the block `seconds` and stop what it left behind if that was not enough.
 
@@ -115,7 +115,7 @@ def execution_deadline(seconds: float, grace_seconds: float = 5.0) -> Iterator[N
 
 def raise_the_time_limit(number: int, frame: Optional[FrameType], seconds: float) -> None:
     """
-    The `SIGALRM` handler `execution_deadline` installs; raises where the running call is.
+    The `SIGALRM` handler `execution_deadline_contextmanager` installs; raises where the running call is.
     """
     raise TimeoutError(f"the {seconds:g} second time limit passed")
 

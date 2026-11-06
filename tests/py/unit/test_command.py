@@ -8,7 +8,7 @@ import pytest
 from mat3ra.utils import command as utils
 from mat3ra.utils.command import (
     TIMEOUT_RETURNCODE,
-    execution_deadline,
+    execution_deadline_contextmanager,
     get_descendant_process_identifiers,
     run_command_with_log,
 )
@@ -98,21 +98,21 @@ def running(process_identifier):
 
 
 @POSIX_ONLY
-def test_execution_deadline_interrupts_the_call_it_wraps():
+def test_execution_deadline_contextmanager_interrupts_the_call_it_wraps():
     with pytest.raises(TimeoutError, match="0.05 second time limit passed"):
-        with execution_deadline(0.05):
+        with execution_deadline_contextmanager(0.05):
             time.sleep(60)
 
 
 @POSIX_ONLY
-def test_execution_deadline_restores_the_timer_and_the_previous_handler():
+def test_execution_deadline_contextmanager_restores_the_timer_and_the_previous_handler():
     def handler(number, frame):
         raise AssertionError("the previous handler must be restored, not called")
 
     previous = signal.signal(signal.SIGALRM, handler)
     try:
         with pytest.raises(TimeoutError):
-            with execution_deadline(0.05):
+            with execution_deadline_contextmanager(0.05):
                 time.sleep(60)
         assert signal.getitimer(signal.ITIMER_REAL) == (0.0, 0.0)
         assert signal.getsignal(signal.SIGALRM) is handler
@@ -121,10 +121,10 @@ def test_execution_deadline_restores_the_timer_and_the_previous_handler():
 
 
 @POSIX_ONLY
-def test_execution_deadline_leaves_the_children_of_a_call_that_returns_in_time():
+def test_execution_deadline_contextmanager_leaves_the_children_of_a_call_that_returns_in_time():
     child, grandchild_identifier = start_child_with_its_own_child()
     try:
-        with execution_deadline(60):
+        with execution_deadline_contextmanager(60):
             value = "returned"
         assert value == "returned"
         assert child.poll() is None
@@ -135,11 +135,11 @@ def test_execution_deadline_leaves_the_children_of_a_call_that_returns_in_time()
 
 
 @POSIX_ONLY
-def test_execution_deadline_stops_the_processes_an_interrupted_call_left_behind():
+def test_execution_deadline_contextmanager_stops_the_processes_an_interrupted_call_left_behind():
     child, grandchild_identifier = start_child_with_its_own_child()
     try:
         with pytest.raises(TimeoutError):
-            with execution_deadline(0.05, grace_seconds=0.2):
+            with execution_deadline_contextmanager(0.05, grace_seconds=0.2):
                 time.sleep(60)
         assert child.wait(timeout=10) != 0
         deadline_to_disappear = time.monotonic() + 10
